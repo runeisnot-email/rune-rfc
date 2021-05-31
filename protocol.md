@@ -49,7 +49,7 @@ Rune is Not Email:
 
 - It provides private and anonymous communication between two parties via
   email-like messages
-- It can send and receive inter-domain messages only
+- It can send and receive intra-domain messages only
 - It provides privacy and anonymity guarantees for both communication initiators
   and recipients
 - It aims to preserve some privacy and anonymity guarantees in the face of a
