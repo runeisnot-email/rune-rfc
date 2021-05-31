@@ -4,12 +4,11 @@
 
 **NOTE:** This is a draft, incomplete proposal.
 
-Standard Email, as defined by the SMTP
-([rfc821](https://datatracker.ietf.org/doc/html/rfc821)), POP3
-([RFC1939](https://datatracker.ietf.org/doc/html/rfc1939)) and IMAP
-([RFC3501](https://datatracker.ietf.org/doc/html/rfc3501)) protocols, suffers
-from various privacy and anonymity issues, the most obvious and easy to solve
-being:
+Standard Email, as defined by the SMTP [[RFC
+821](https://datatracker.ietf.org/doc/html/rfc821)], POP3 [[RFC
+1939](https://datatracker.ietf.org/doc/html/rfc1939)] and IMAP [[RFC
+3501](https://datatracker.ietf.org/doc/html/rfc3501)] protocols, suffers from
+various privacy and anonymity issues, the most obvious and easy to solve being:
 
 - When TLS *is not* used, any Eavesdropper is able to read the messages.
 
@@ -41,14 +40,16 @@ attacks and compromised servers.
 
 Rune is Not Email:
 
-- It cannot communicate with email servers nor does it uses any standard email protocol
+- It cannot communicate with email servers nor does it use any standard email
+  protocol
 - It cannot receive traditional email
 - It cannot send traditional email
 
 ## What Rune is
 
-- It provides private and anonymous communication between two parties via email-like messages
-- It can send and receive inter-domain messages
+- It provides private and anonymous communication between two parties via
+  email-like messages
+- It can send and receive inter-domain messages only
 - It provides privacy and anonymity guarantees for both communication initiators
   and recipients
 - It aims to preserve some privacy and anonymity guarantees in the face of a
@@ -62,4 +63,4 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 interpreted as described in [RFC
 2119](https://datatracker.ietf.org/doc/html/rfc2119). Only UPPERCASE usage of
 these keywords have the defined special meanings, as described in
-[RFC8174](https://datatracker.ietf.org/doc/html/rfc8174).
+[RFC 8174](https://datatracker.ietf.org/doc/html/rfc8174).
