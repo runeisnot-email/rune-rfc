@@ -66,6 +66,19 @@ these keywords have the defined special meanings, as described in
 [RFC 8174](https://datatracker.ietf.org/doc/html/rfc8174).
 
 
+# Security requirements
+
+- Every communication between client and server MUST occur over TLS 1.2 or
+  grater.
+
+- The client SHOULD generate a new private/public key pair that is specifically
+  and only used for Rune messaging and no other purposes. Furthermore every
+  registered address SHOULD use a different private/public key pair.
+
+- The server MUST NOT generate private/public key pairs for its clients.
+
+
+
 # Protocol Overview
 
 Rune allows for private and anonymous communication between two parties in much
@@ -114,11 +127,14 @@ message of the form:
     HOWDY [server configurable welcome message]
 
 
+
+
 ## Register a Client
 
 The client MUST generate a private/public key pair. The server MUST allow for
 two possible (configurable) ways of allowing client registration: free
-registration and via invitation token.
+registration and via invitation token. Once a client is successfully registered
+the server stores it's public key associated with it's address.
 
 ### Free Registration
 
@@ -186,16 +202,14 @@ connection:
     410 registration challenge failed
 
 
+
+
 ## Send a Message
 
 ## Manage Mailbox
 
+### List messages
 
+### Retrieve a message
 
-# Security considerations
-
-- Every communication between client and server MUST be over TLS 1.2 or grater.
-
-- The client SHOULD generate a new private/public key pair that is specifically
-  and only used for Rune messaging and no other purposes. Furthermore every
-  registered address SHOULD use a different private/public key pair.
+### Delete a message
