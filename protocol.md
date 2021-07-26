@@ -259,7 +259,12 @@ connection:
 The client transmits a signed, encrypted message with a maximum payload sized
 imposed by server configuration and announced during the sending negotiation.
 
-The message content is formed as the following XML. If no encoding attribute is
+The original sender message is referred to as the `MESSAGE` which is encrypted
+with the receiver's public key, and then wrapped in a `CLIENT MESSAGE` which is
+then encrypted with the server's public key to be actually send to the server
+with the `MESSAGE` command.
+
+The `MESSAGE` is formed as the following XML. If no encoding attribute is
 specified UTF-8 is assumed:
 
 ```xml
@@ -287,12 +292,7 @@ specified UTF-8 is assumed:
 </message>
 ```
 
-The final `CLIENT MESSAGE` string is constructed by (1) encrypting the XML
-message using the receiver's public key, (2) signing the result with the
-sender's private key and (3) encrypting the message + signature concatenated
-result with the server's public key.
-
-The `CLIENT MESSAGE` XML MUST be *well formed* and *valid* by the following XML
+The `MESSAGE` XML MUST be *well formed* and *valid* by the following XML
 Schema:
 
 ```xml
@@ -334,8 +334,7 @@ Schema:
 </xs:schema>
 ```
 
-
-<!-- The `CLIENT MESSAGE` XML MUST be *well formed* and *valid* by the following DTD: -->
+<!-- The `MESSAGE` XML MUST be *well formed* and *valid* by the following DTD: -->
 
 <!-- ```dtd -->
 <!-- <!DOCTYPE message [ -->
@@ -352,14 +351,65 @@ Schema:
 <!-- ]> -->
 <!-- ``` -->
 
-Notice the absence of `to` and `from` metadata in the CLIENT MESSAGE. That
-information is respectively derived from: (1) the message is encrypted with the
-receiver's public key and (2) the sender signs the message with its private key.
+Notice the absence of `to` and `from` metadata in the MESSAGE. That information
+is respectively derived from: (1) the message is encrypted with the receiver's
+public key and (2) the sender signs the message with its private key.
 
+
+Then, the `CLIENT MESSAGE` that is actually send to the server conforms to the
+following XML. If no encoding attribute is specified UTF-8 is assumed:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<client_message>
+    <content>
+        Encrypted MESSAGE (entire XML) using the receiver's public key
+    </content>
+
+    <signature>
+        signature of the <content> using the sender's private key
+    </signature>
+</client_message>
+```
+
+The final `CLIENT MESSAGE` string is constructed by (1) encrypting the MESSAGE
+XML using the receiver's public key, (2) signing the result with the sender's
+private key and (3) encrypting the CLIENT MESSAGE entire XML with the server's
+public key.
 
 #### Stored Message
 
 <!-- TODO -->
+
+<!-- The server verifies that the signature of the encrypted *CLIENT MESSAGE* is both -->
+<!-- valid and matches the sender address, if that's the case it will then create a -->
+<!-- *STORED MESSAGE* (The `Message Format` section explains how it's created), store -->
+<!-- it in the receiver's mailbox and respond with a success status code. -->
+
+<!-- ```xml -->
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
+<!-- <message> -->
+<!--     <content> -->
+
+<!--         <subject> -->
+<!--             User message subject -->
+<!--         </subject> -->
+
+<!--         <body> -->
+<!--             User message body -->
+<!--         </body> -->
+
+<!--         <attachment name=""> -->
+<!--             BASE64-encoded attachment -->
+<!--         </attachment> -->
+
+<!--     </content> -->
+
+<!--     <signature> -->
+<!--         signature of the concatenated <content> using the sender's private key -->
+<!--     </signature> -->
+<!-- </message> -->
+<!-- ``` -->
 
 
 
