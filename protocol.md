@@ -1,4 +1,11 @@
-# The Rune is Not Email (RUNE) protocol
+---
+title: The Rune is Not Email (RUNE) protocol RFC
+author: Daniel Campoverde C.
+lang: en
+numbersections: true
+...
+
+<!-- # The Rune is Not Email (RUNE) protocol -->
 
 # Introduction
 
@@ -119,10 +126,10 @@ Each registered client possess an address of the form \<USERNAME\>@\<DOMAIN\>,
 where both *USERNAME* and *DOMAIN* are arbitrary 3-50 symbol alphanumeric
 strings that may contain dots, hyphens and underscores. The *DOMAIN* does not
 need to be a valid nor registered Internet domain name. It serves the only
-purpose of identifying the addresses namespace of a server. It is RECOMMENDED
-that the *DOMAIN* does not correspond to a valid or registered Internet domain
-name for anonymity reasons. Both *USERNAME* and *DOMAIN* MAY be randomly
-generated for anonymity reasons.
+purpose of identifying the addresses namespace of a Rune server. It is
+RECOMMENDED that the *DOMAIN* does not correspond to a valid or registered
+Internet domain name for anonymity reasons. Both *USERNAME* and *DOMAIN* MAY be
+randomly generated for anonymity reasons.
 
 
 # Operations
@@ -255,27 +262,100 @@ imposed by server configuration and announced during the sending negotiation.
 The message content is formed as the following XML. If no encoding attribute is
 specified UTF-8 is assumed:
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <message>
-        <content>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<message>
+    <content>
 
-            User message
+        <subject>
+            User message subject
+        </subject>
 
-            <attachment name="">
-                BASE64-encoded attachment
-            </attachment>
+        <body>
+            User message body
+        </body>
 
-        </content>
+        <attachment name="">
+            BASE64-encoded attachment
+        </attachment>
 
-        <signature>
-            signature of the concatenated content using sender's private key
-        </signature>
-    </message>
+    </content>
 
-The final CLIENT MESSAGE string is constructed by (1) encrypting the XML message
-using the receiver's public key and (2) signing the result with the sender's
-private key and (3) encrypting the message + signature concatenated result with
-the server's public key.
+    <signature>
+        signature of the concatenated <content> using the sender's private key
+    </signature>
+</message>
+```
+
+The final `CLIENT MESSAGE` string is constructed by (1) encrypting the XML
+message using the receiver's public key, (2) signing the result with the
+sender's private key and (3) encrypting the message + signature concatenated
+result with the server's public key.
+
+The `CLIENT MESSAGE` XML MUST be *well formed* and *valid* by the following XML
+Schema:
+
+```xml
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="message">
+    <xs:complexType>
+        <xs:sequence>
+
+            <xs:element name="content">
+                <xs:complexType>
+                    <xs:sequence>
+
+                        <xs:element name="subject" type="xs:string"/>
+                        <xs:element name="body"    type="xs:string"/>
+
+                        <xs:element name="attachment" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="name" type="xs:string" use="required"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+
+            <xs:element name="signature" type="xs:token"/>
+
+        </xs:sequence>
+    </xs:complexType>
+</xs:element>
+
+</xs:schema>
+```
+
+
+<!-- The `CLIENT MESSAGE` XML MUST be *well formed* and *valid* by the following DTD: -->
+
+<!-- ```dtd -->
+<!-- <!DOCTYPE message [ -->
+
+<!--     <!ELEMENT message    (content, signature)> -->
+<!--     <!ELEMENT content    (subject, body, attachment*)> -->
+<!--     <!ELEMENT subject    (#CDATA)> -->
+<!--     <!ELEMENT body       (#CDATA)> -->
+<!--     <!ELEMENT attachment (#CDATA)> -->
+<!--     <!ELEMENT signature  (#CDATA)> -->
+
+<!--     <!ATTLIST attachment name CDATA #REQUIRED> -->
+
+<!-- ]> -->
+<!-- ``` -->
+
+Notice the absence of `to` and `from` metadata in the CLIENT MESSAGE. That
+information is respectively derived from: (1) the message is encrypted with the
+receiver's public key and (2) the sender signs the message with its private key.
+
 
 #### Stored Message
 
