@@ -1,6 +1,6 @@
 ---
 title: The Rune is Not Email (RUNE) protocol RFC
-author: Daniel Campoverde C.
+subtitle: Draft
 lang: en
 numbersections: true
 ...
@@ -85,7 +85,10 @@ these keywords have the defined special meanings, as described in [RFC
 - The server MUST NOT generate private/public key pairs for its clients.
 
 - The server MUST only store the encrypted messages in the receiver's mailbox
-  and no additional metadata
+  and no additional metadata.
+
+- The server MAY set file system date and time metadata in the receiver's
+  mailbox to random dates after each access operation.
 
 
 
@@ -314,7 +317,32 @@ message from the server itself.
 
 #### Stored Message
 
-<!-- TODO -->
+The server receives the encrypted `CLIENT MESSAGE`, decrypts it using its own
+private key, and verifies the signature using the sender's public key.
+
+Then constructs the `STORED MESSAGE` that conforms to the following UTF-8
+encoded JSON:
+
+```json
+{
+    "message": {
+        "sender":      "Sender address",
+        "received_at": "UTC ISO8601 encoded date",
+        "content":     "Verbatim CLIENT MESSAGE's *content*"
+    },
+
+    "signature":   "signature of the {message} using the server's private key"
+}
+```
+
+The final `STORED MESSAGE` string is constructed by (1) adding the
+signature-authenticated sender's address and UTC date, (2) signing the result
+with the server's private key and (3) encrypting the STORED MESSAGE entire JSON
+with the receiver's public key. The `STORED MESSAGE` final encrypted string is
+then stored in the receiver's mailbox with an associated randomly generated
+UUID.
+
+
 
 <!-- The server verifies that the signature of the encrypted *CLIENT MESSAGE* is both -->
 <!-- valid and matches the sender address, if that's the case it will then create a -->
