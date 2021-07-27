@@ -339,17 +339,8 @@ The final `STORED MESSAGE` string is constructed by (1) adding the
 signature-authenticated sender's address and UTC date, (2) signing the result
 with the server's private key and (3) encrypting the STORED MESSAGE entire JSON
 with the receiver's public key. The `STORED MESSAGE` final encrypted string is
-then stored in the receiver's mailbox with an associated randomly generated
-UUID.
-
-
-
-<!-- The server verifies that the signature of the encrypted *CLIENT MESSAGE* is both -->
-<!-- valid and matches the sender address, if that's the case it will then create a -->
-<!-- *STORED MESSAGE* (The `Message Format` section explains how it's created), store -->
-<!-- it in the receiver's mailbox and respond with a success status code. -->
-
-
+then stored in the receiver's mailbox with an associated randomly generated UUID
+as defined by the [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122).
 
 
 
