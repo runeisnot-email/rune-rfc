@@ -264,92 +264,25 @@ with the receiver's public key, and then wrapped in a `CLIENT MESSAGE` which is
 then encrypted with the server's public key to be actually send to the server
 with the `MESSAGE` command.
 
-The `MESSAGE` is formed as the following XML. If no encoding attribute is
-specified UTF-8 is assumed:
+The `MESSAGE` is formed as the following UTF-8 encoded JSON:
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<message>
-    <content>
+```json
+{
+    "content": {
+        "subject":     "User message subject",
+        "body":        "User message body",
 
-        <subject>
-            User message subject
-        </subject>
+        "attachments": [
+            {
+                "filename": "Attachment file name",
+                "base91":   "BASE91-encoded attachment"
+            },
+        ]
+    },
 
-        <body>
-            User message body
-        </body>
-
-        <attachment name="">
-            BASE64-encoded attachment
-        </attachment>
-
-    </content>
-
-    <signature>
-        signature of the concatenated <content> using the sender's private key
-    </signature>
-</message>
+    "signature": "signature of the concatenated {content} using the sender's private key"
+}
 ```
-
-The `MESSAGE` XML MUST be *well formed* and *valid* by the following XML
-Schema:
-
-```xml
-<?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-<xs:element name="message">
-    <xs:complexType>
-        <xs:sequence>
-
-            <xs:element name="content">
-                <xs:complexType>
-                    <xs:sequence>
-
-                        <xs:element name="subject" type="xs:string"/>
-                        <xs:element name="body"    type="xs:string"/>
-
-                        <xs:element name="attachment" minOccurs="0" maxOccurs="unbounded">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="xs:string">
-                                        <xs:attribute name="name" type="xs:string" use="required"/>
-                                    </xs:extension>
-                                </xs:simpleContent>
-                            </xs:complexType>
-                        </xs:element>
-
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-
-
-            <xs:element name="signature" type="xs:token"/>
-
-        </xs:sequence>
-    </xs:complexType>
-</xs:element>
-
-</xs:schema>
-```
-
-<!-- The `MESSAGE` XML MUST be *well formed* and *valid* by the following DTD: -->
-
-<!-- ```dtd -->
-<!-- <!DOCTYPE message [ -->
-
-<!--     <!ELEMENT message    (content, signature)> -->
-<!--     <!ELEMENT content    (subject, body, attachment*)> -->
-<!--     <!ELEMENT subject    (#CDATA)> -->
-<!--     <!ELEMENT body       (#CDATA)> -->
-<!--     <!ELEMENT attachment (#CDATA)> -->
-<!--     <!ELEMENT signature  (#CDATA)> -->
-
-<!--     <!ATTLIST attachment name CDATA #REQUIRED> -->
-
-<!-- ]> -->
-<!-- ``` -->
 
 Notice the absence of `to` and `from` metadata in the MESSAGE. That information
 is respectively derived from: (1) the message is encrypted with the receiver's
@@ -357,25 +290,21 @@ public key and (2) the sender signs the message with its private key.
 
 
 Then, the `CLIENT MESSAGE` that is actually send to the server conforms to the
-following XML. If no encoding attribute is specified UTF-8 is assumed:
+following UTF-8 encoded JSON:
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<client_message>
-    <content>
-        Encrypted MESSAGE (entire XML) using the receiver's public key
-    </content>
-
-    <signature>
-        signature of the <content> using the sender's private key
-    </signature>
-</client_message>
+```json
+{
+    "content":   "Encrypted MESSAGE (entire JSON) using the receiver's public key",
+    "signature": "signature of the {content} using the sender's private key"
+}
 ```
 
 The final `CLIENT MESSAGE` string is constructed by (1) encrypting the MESSAGE
-XML using the receiver's public key, (2) signing the result with the sender's
-private key and (3) encrypting the CLIENT MESSAGE entire XML with the server's
-public key.
+entire JSON using the receiver's public key, (2) signing the result with the
+sender's private key and (3) encrypting the CLIENT MESSAGE entire JSON with the
+server's public key. This layering of encryption and signatures allows to
+authenticate the sender to both the receiver and the server while hiding the
+message from the server itself.
 
 #### Stored Message
 
@@ -386,30 +315,6 @@ public key.
 <!-- *STORED MESSAGE* (The `Message Format` section explains how it's created), store -->
 <!-- it in the receiver's mailbox and respond with a success status code. -->
 
-<!-- ```xml -->
-<!-- <?xml version="1.0" encoding="UTF-8"?> -->
-<!-- <message> -->
-<!--     <content> -->
-
-<!--         <subject> -->
-<!--             User message subject -->
-<!--         </subject> -->
-
-<!--         <body> -->
-<!--             User message body -->
-<!--         </body> -->
-
-<!--         <attachment name=""> -->
-<!--             BASE64-encoded attachment -->
-<!--         </attachment> -->
-
-<!--     </content> -->
-
-<!--     <signature> -->
-<!--         signature of the concatenated <content> using the sender's private key -->
-<!--     </signature> -->
-<!-- </message> -->
-<!-- ``` -->
 
 
 
