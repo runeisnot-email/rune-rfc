@@ -38,9 +38,9 @@ However:
 
 
 Rune IS NOT a substitute for standard Email, conversely it aims to provide a
-communication mechanism that behaves in a similar way to email, but provides
-strong privacy and anonymity guarantees, including safety from metadata analysis
-attacks and compromised servers.
+communication mechanism that behaves akin to email, but provides strong privacy
+and anonymity guarantees, including safety from metadata analysis attacks and
+compromised servers.
 
 
 ## What Rune is not
@@ -65,12 +65,12 @@ Rune is Not Email:
 
 # Terminology
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC
 2119](https://datatracker.ietf.org/doc/html/rfc2119). Only UPPERCASE usage of
-these keywords have the defined special meanings, as described in
-[RFC 8174](https://datatracker.ietf.org/doc/html/rfc8174).
+these keywords have the defined special meanings, as described in [RFC
+8174](https://datatracker.ietf.org/doc/html/rfc8174).
 
 
 # Security requirements
@@ -79,7 +79,7 @@ these keywords have the defined special meanings, as described in
   grater.
 
 - The client SHOULD generate a new private/public key pair that is specifically
-  and only used for Rune messaging and no other purposes. Furthermore every
+  and only used for Rune messaging and no other purposes. Furthermore, every
   registered address SHOULD use a different private/public key pair.
 
 - The server MUST NOT generate private/public key pairs for its clients.
@@ -105,20 +105,20 @@ The protocol contemplates three major operations:
 
 A new client registers on the server with a new address and a public key, either
 freely or by using an invitation token. A registered client can send end-to-end
-encrypted messages to other addresses of the same domain as well as manage it's
+encrypted messages to other addresses of the same domain as well as manage its
 own mailbox.
 
 A registered client sends a message by asking the server for the public key of
-the receiver address. Signs the message using it's own private key and then
+the receiver address. Signs the message using its own private key and then
 encrypts the message using the public key of the receiver. The server
 concatenates the encrypted message with the sender address, the sending time and
-date; Sings it with it's private key and encrypts it again with the public key
-of the receiver before storing it for later retrieval upon the receiver request.
+date; Sings it with its private key and encrypts it again with the public key of
+the receiver before storing it for later retrieval upon the receiver request.
 
 Stored messages on the server can only be retrieved and read by the receiver
-using it's private key, including it's sender address and other metadata. This
-way both message and sender address are only known to the receiver. The server
-can only known which messages are for which receivers and nothing else.
+using its private key, including its sender address and other metadata. This way
+both message and sender address are only known to the receiver. The server can
+only know which messages are for which receivers and nothing else.
 
 ## Addresses
 
@@ -126,10 +126,10 @@ Each registered client possess an address of the form \<USERNAME\>@\<DOMAIN\>,
 where both *USERNAME* and *DOMAIN* are arbitrary 3-50 symbol alphanumeric
 strings that may contain dots, hyphens and underscores. The *DOMAIN* does not
 need to be a valid nor registered Internet domain name. It serves the only
-purpose of identifying the addresses namespace of a Rune server. It is
-RECOMMENDED that the *DOMAIN* does not correspond to a valid or registered
-Internet domain name for anonymity reasons. Both *USERNAME* and *DOMAIN* MAY be
-randomly generated for anonymity reasons.
+purpose of identifying the address namespace of a Rune server. It is RECOMMENDED
+that the *DOMAIN* does not correspond to a valid or registered Internet domain
+name for anonymity reasons. Both *USERNAME* and *DOMAIN* MAY be randomly
+generated for anonymity reasons.
 
 
 # Operations
@@ -145,7 +145,7 @@ message of the form:
 The client MUST generate a private/public key pair. The server SHOULD allow for
 two possible (configurable) ways of allowing client registration: free
 registration and via invitation token. Once a client is successfully registered
-the server stores it's public key associated with it's address.
+the server stores its public key associated with its address.
 
 
 ### Free Registration
@@ -200,7 +200,7 @@ of the response:
     215 <challenge string> <server public key...>
 
 The client must then verify the signature using the server's public key, decrypt
-the challenge string using it's own private key and give back the challenge
+the challenge string using its own private key and give back the challenge
 string encrypted with the server's public key using the command:
 
     CHALLANGE_ACCEPTED <re-encrypted challenge string>
@@ -209,7 +209,7 @@ If the challenge is passed the server responds with a status code:
 
     210 REGISTERED <USERNAME>@<DOMAIN>
 
-Otherwise the server responds with a status code and immediately close the
+Otherwise, the server responds with a status code and immediately close the
 connection:
 
     410 REGISTRATION CHALLENGE FAILED
@@ -233,7 +233,7 @@ MiB, the public key for the receiver address and the server's public key:
 
     201 <maximum payload> <receiver public key...> <server public key...>
 
-The client can now use the *MESSAGE* command, specifying it's own address, to
+The client can now use the *MESSAGE* command, specifying its own address, to
 send the signed, encrypted message, known as the *CLIENT MESSAGE* (The `Message
 Format` section explains how it's created).
 
@@ -246,7 +246,7 @@ it in the receiver's mailbox and respond with a success status code.
 
     202 ROGER
 
-Other wise it will respond with an error code and immediately close the
+Otherwise, it will respond with an error code and immediately close the
 connection:
 
     405 SIGNATURE INVALID
@@ -254,7 +254,12 @@ connection:
 
 ### Message Format
 
-#### Client Message
+The client creates a `MESSAGE` which encrypts and signs to create a `CLIENT
+MESSAGE` that sends to the server. The server unwraps the `CLIENT MESSAGE`, adds
+some metadata needed by the receiver, and encrypts this new data to create an
+`STORED MESSAGE` that rests on the server for later receiver's retrieval.
+
+#### Message & Client Message
 
 The client transmits a signed, encrypted message with a maximum payload sized
 imposed by server configuration and announced during the sending negotiation.
@@ -289,7 +294,7 @@ is respectively derived from: (1) the message is encrypted with the receiver's
 public key and (2) the sender signs the message with its private key.
 
 
-Then, the `CLIENT MESSAGE` that is actually send to the server conforms to the
+The `CLIENT MESSAGE` that is actually sent to the server conforms to the
 following UTF-8 encoded JSON:
 
 ```json
@@ -305,6 +310,7 @@ sender's private key and (3) encrypting the CLIENT MESSAGE entire JSON with the
 server's public key. This layering of encryption and signatures allows to
 authenticate the sender to both the receiver and the server while hiding the
 message from the server itself.
+
 
 #### Stored Message
 
